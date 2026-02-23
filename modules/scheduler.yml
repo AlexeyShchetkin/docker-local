@@ -1,0 +1,11 @@
+services:
+  scheduler:
+    extends:
+      file: app.yml
+      service: app
+    image: ${PROJECT_ALIAS}-app:latest
+    restart: always
+    entrypoint: [ "php", "artisan", "schedule:work" ]
+    networks:
+      container_network:
+        ipv4_address: ${NETWORK_SUBNET}.99

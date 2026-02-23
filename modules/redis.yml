@@ -1,0 +1,19 @@
+services:
+  redis:
+    image: redis:7.0-alpine
+    command: redis-server --requirepass ${DEFAULT_PASSWORD}
+    restart: always
+    environment:
+      DEFAULT_PASSWORD: ${DEFAULT_PASSWORD}
+    volumes:
+      - ./storage/redis/:/data/
+    healthcheck:
+      test: ["CMD", "sh", "-c", "redis-cli -a \"$$DEFAULT_PASSWORD\" ping"]
+      timeout: 3s
+      interval: 1s
+      retries: 30
+    logging:
+      driver: "none"
+    networks:
+      container_network:
+        ipv4_address: ${NETWORK_SUBNET}.5

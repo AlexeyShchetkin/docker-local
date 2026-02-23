@@ -1,0 +1,17 @@
+# Уникальный префикс для контейнеров проекта (только латиница и цифры)
+PROJECT_ALIAS=alias
+
+# Уникальная подсеть (измените 2 и/или 3 октет для каждого нового проекта)
+NETWORK_SUBNET=10.10.100
+
+# Настройки базы данных
+DB_NAME=database
+DB_USERNAME=postgres
+DEFAULT_PASSWORD=password
+
+# UID/GID пользователя на хосте
+USER_UID=1000
+USER_GID=1000
+
+# Режим Xdebug (off, debug, coverage). Чтобы включить отладку, поставьте debug.
+XDEBUG_MODE=off

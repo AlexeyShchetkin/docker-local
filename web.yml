@@ -1,0 +1,17 @@
+services:
+  web:
+    image: ${PROJECT_ALIAS}-web:latest
+    build:
+      context: .docker/local/webserver
+    restart: "always"
+    depends_on:
+      - app
+    volumes:
+      - ./src/:/var/www/html/
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+    networks:
+      container_network:
+        ipv4_address: ${NETWORK_SUBNET}.4

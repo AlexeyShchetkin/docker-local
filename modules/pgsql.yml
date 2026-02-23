@@ -1,0 +1,19 @@
+services:
+  db:
+    image: postgres:17
+    restart: always
+    volumes:
+      - ./storage/postgresql:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      timeout: 3s
+      interval: 1s
+      retries: 30
+    environment:
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DEFAULT_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    networks:
+      container_network:
+        ipv4_address: ${NETWORK_SUBNET}.3
+
