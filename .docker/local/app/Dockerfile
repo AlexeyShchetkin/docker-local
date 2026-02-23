@@ -28,7 +28,8 @@ COPY php.ini /usr/local/etc/php/php.ini
 ENV COMPOSER_ALLOW_SUPERUSER=1
 
 RUN groupmod -g ${USER_GID} www-data \
-    && usermod -u ${USER_UID} www-data
+    && usermod -u ${USER_UID} www-data \
+    && chown -R www-data:www-data /var/www
 
 WORKDIR /var/www/html
 
