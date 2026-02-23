@@ -17,12 +17,10 @@ services:
     build:
       context: .docker/local/app
       args:
+        PHP_IMAGE: ${PHP_IMAGE}
         USER_UID: ${USER_UID:-1000}
         USER_GID: ${USER_GID:-1000}
     <<: *common-app
-    depends_on:
-      db:
-        condition: service_healthy
     networks:
       container_network:
         ipv4_address: ${NETWORK_SUBNET}.2
