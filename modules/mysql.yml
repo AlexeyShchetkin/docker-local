@@ -1,6 +1,6 @@
 services:
   mysql:
-    image: mariadb:latest
+    image: mariadb:11.4
     command: --default-authentication-plugin=mysql_native_password
     restart: "always"
     volumes:

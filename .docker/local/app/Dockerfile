@@ -10,6 +10,7 @@ RUN apt-get update && apt-get install -y \
     libcurl4-gnutls-dev \
     libicu-dev \
     libpq-dev \
+    default-libmysqlclient-dev \
     libxml2-dev \
     && pecl install xdebug \
     && docker-php-ext-enable xdebug \
@@ -19,6 +20,7 @@ RUN apt-get update && apt-get install -y \
     && docker-php-ext-install -j$(nproc) \
     zip curl intl \
     pdo_pgsql pgsql \
+    pdo_mysql mysqli \
     xml pcntl opcache exif dom
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/bin --filename=composer --quiet
