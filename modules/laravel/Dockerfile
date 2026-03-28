@@ -4,7 +4,7 @@ FROM ${PHP_IMAGE}
 ARG USER_UID=1000
 ARG USER_GID=1000
 
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     mc unzip rsync npm \
     libzip-dev zlib1g-dev \
     libcurl4-gnutls-dev \
@@ -21,11 +21,12 @@ RUN apt-get update && apt-get install -y \
     zip curl intl \
     pdo_pgsql pgsql \
     pdo_mysql mysqli \
-    xml pcntl opcache exif dom
+    xml pcntl opcache exif dom \
+    && rm -rf /var/lib/apt/lists/*
 
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/bin --filename=composer --quiet
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-COPY php.ini /usr/local/etc/php/php.ini
+COPY config/php.ini /usr/local/etc/php/php.ini
 
 ENV COMPOSER_ALLOW_SUPERUSER=1
 

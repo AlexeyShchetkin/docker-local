@@ -1,6 +1,6 @@
 services:
   redis:
-    image: redis:7.0-alpine
+    image: redis:7.4-alpine
     command: redis-server --requirepass ${DEFAULT_PASSWORD}
     restart: always
     environment:

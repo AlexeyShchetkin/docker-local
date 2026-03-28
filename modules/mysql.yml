@@ -14,5 +14,5 @@ services:
       driver: "none"
     networks:
       container_network:
-        ipv4_address: ${NETWORK_SUBNET}.33
+        ipv4_address: ${NETWORK_SUBNET}.3
 

@@ -1,0 +1,34 @@
+x-common-app: &common-app
+  image: ${PROJECT_ALIAS}-app:latest
+  restart: always
+  volumes:
+    - ./src/:/var/www/html/:delegated
+    - ./modules/symfony/config/xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+  environment:
+    XDEBUG_MODE: ${XDEBUG_MODE:-off}
+  logging:
+    driver: "json-file"
+    options:
+      max-size: "10m"
+      max-file: "5"
+
+services:
+  app:
+    build:
+      context: modules/symfony
+      dockerfile: Dockerfile
+      args:
+        PHP_IMAGE: ${PHP_IMAGE}
+        USER_UID: ${USER_UID:-1000}
+        USER_GID: ${USER_GID:-1000}
+    <<: *common-app
+    networks:
+      container_network:
+        ipv4_address: ${NETWORK_SUBNET}.2
+
+networks:
+  container_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: ${NETWORK_SUBNET}.0/24

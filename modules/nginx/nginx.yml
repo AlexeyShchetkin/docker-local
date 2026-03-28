@@ -2,7 +2,7 @@ services:
   web:
     image: ${PROJECT_ALIAS}-web:latest
     build:
-      context: .docker/local/webserver
+      context: modules/nginx
     restart: "always"
     depends_on:
       - app

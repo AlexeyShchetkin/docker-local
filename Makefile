@@ -1,14 +1,16 @@
 -include .docker.local
 
-# Собираем все yml файлы в корне в одну команду
-COMPOSE_FILES := $(foreach file,$(wildcard *.yml),-f $(file))
-COMPOSE := docker compose -p $(PROJECT_ALIAS) --env-file .docker.local $(COMPOSE_FILES)
+# Список compose-файлов задаётся в .docker.local как COMPOSE_FILES (пути через пробел).
+COMPOSE_FILE_ARGS := $(foreach file,$(COMPOSE_FILES),-f $(file))
+COMPOSE := docker compose -p $(PROJECT_ALIAS) --project-directory $(CURDIR) --env-file .docker.local $(COMPOSE_FILE_ARGS)
 
-.PHONY: build start stop restart shell logs help init artisan check-config
+.PHONY: build start stop down restart shell logs help init check-config ps config pull
 
-check-config: ## Проверить .docker.local и PROJECT_ALIAS (вызывается перед compose-командами)
+check-config: ## Проверить .docker.local, PROJECT_ALIAS, NETWORK_SUBNET и COMPOSE_FILES
 	@test -f .docker.local || (printf '%s\n' "Ошибка: нет файла .docker.local. Выполните: make init" >&2 && exit 1)
 	@test -n "$(PROJECT_ALIAS)" || (printf '%s\n' "Ошибка: в .docker.local не задан или пустой PROJECT_ALIAS" >&2 && exit 1)
+	@test -n "$(NETWORK_SUBNET)" || (printf '%s\n' "Ошибка: в .docker.local не задан или пустой NETWORK_SUBNET" >&2 && exit 1)
+	@test -n "$(COMPOSE_FILES)" || (printf '%s\n' "Ошибка: в .docker.local не задан или пустой COMPOSE_FILES (список compose-файлов через пробел, см. .docker.local.example)" >&2 && exit 1)
 
 help: ## Справка
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-15s\033[0m %s\n", $$1, $$2}'
@@ -23,12 +25,24 @@ start: check-config ## Запуск всех контейнеров
 	@$(COMPOSE) up -d
 	@echo "-------------------------------------------------------"
 	@echo "Project:    $(PROJECT_ALIAS)"
-	@echo "Webserver:  http://$(NETWORK_SUBNET).4"
-	@echo "Database:   $(NETWORK_SUBNET).3"
+	@echo "Web:        http://$(NETWORK_SUBNET).4"
+	@echo "БД / IP:    $(NETWORK_SUBNET).3"
 	@echo "-------------------------------------------------------"
 
 stop: check-config ## Остановка и удаление контейнеров
 	$(COMPOSE) down --remove-orphans
+
+down: check-config ## То же, что stop (docker compose down --remove-orphans)
+	$(COMPOSE) down --remove-orphans
+
+ps: check-config ## Список контейнеров
+	$(COMPOSE) ps
+
+config: check-config ## Итоговая конфигурация compose (проверка YAML)
+	$(COMPOSE) config
+
+pull: check-config ## Обновить образы из registry (без локальной сборки)
+	$(COMPOSE) pull
 
 restart: stop start ## Перезапуск
 
@@ -37,10 +51,3 @@ shell: check-config ## Вход в контейнер приложения
 
 logs: check-config ## Просмотр логов приложения
 	$(COMPOSE) logs -f app
-
-artisan: check-config ## Выполнить artisan команду (пример: make artisan migrate)
-	$(COMPOSE) exec -u www-data app php artisan $(filter-out $@,$(MAKECMDGOALS))
-
-# Пустая цель, чтобы make не ругался на аргументы artisan как на неизвестные цели
-%:
-	@:

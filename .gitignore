@@ -3,3 +3,6 @@
 
 # Env and secrets
 .docker.local
+
+# Устаревший сценарий: копия laravel.yml/symfony.yml в корень (сейчас — COMPOSE_FILES)
+/app.yml

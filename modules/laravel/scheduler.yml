@@ -1,0 +1,18 @@
+services:
+  scheduler:
+    image: ${PROJECT_ALIAS}-app:latest
+    restart: always
+    volumes:
+      - ./src/:/var/www/html/:delegated
+      - ./modules/laravel/config/xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+    environment:
+      XDEBUG_MODE: ${XDEBUG_MODE:-off}
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
+    entrypoint: [ "php", "artisan", "schedule:work" ]
+    networks:
+      container_network:
+        ipv4_address: ${NETWORK_SUBNET}.99

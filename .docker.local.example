@@ -1,6 +1,10 @@
 # Уникальный префикс для контейнеров проекта (только латиница и цифры)
 PROJECT_ALIAS=alias
 
+# Compose-файлы относительно корня репозитория (через пробел). Копировать YAML в корень не нужно.
+# Пример Laravel + nginx + postgres + redis:
+COMPOSE_FILES=modules/laravel/laravel.yml modules/nginx/nginx.yml modules/pgsql.yml modules/redis.yml
+
 # Базовый образ PHP
 PHP_IMAGE=php:8.4-fpm
 
