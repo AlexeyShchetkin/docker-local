@@ -5,7 +5,7 @@ ARG USER_UID=1000
 ARG USER_GID=1000
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    mc unzip rsync npm \
+    mc unzip rsync npm git \
     libzip-dev zlib1g-dev \
     libcurl4-gnutls-dev \
     libicu-dev \
